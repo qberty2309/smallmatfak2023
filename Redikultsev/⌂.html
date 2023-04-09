@@ -1,0 +1,332 @@
+<head>
+<title>https://bit.ly/3ga0Wma</title>
+<style>
+	#grid{
+		border-collapse: collapse;
+		border: none;
+	}
+	#grid td{
+		padding: 0;
+		border: #000;
+		width: 25px;
+		height: 25px;
+	}
+	#tank{
+		background: #000;
+		position: absolute;
+	}
+	#tank img{
+		position: absolute;
+		z-index: 99;
+	}
+	#enemy{
+		background: #000;
+		position: absolute;
+	}
+	#enemy img{
+		position: absolute;
+		z-index: 99;
+	}
+</style>
+</head>
+<body onload="fillBattlefield(battlefield, KEY_CODE.UP)">
+<table id="grid"></table>
+<script>
+let enemyDir = "40"
+let enemyX = 4;
+let enemyY = 13;
+let m=26
+let n=26
+let battlefield = [
+	[4,0,0,0,0,0,0,0,2,2,0,0,0,0,0,0,2,2,0,0,0,0,0,0,0,4,],
+	[0,0,0,0,0,0,0,0,2,2,0,0,0,0,0,0,2,2,0,0,0,0,0,0,0,0,],
+	[0,0,0,0,0,0,0,0,2,2,0,0,1,1,0,0,2,2,0,0,0,0,0,0,0,0,],
+	[0,0,0,0,0,0,0,0,2,2,0,0,0,0,0,0,2,2,0,0,0,0,0,0,0,0,],
+	[0,0,0,0,0,0,0,0,2,2,0,0,0,0,0,0,2,2,0,0,0,0,0,0,0,0,],
+	[0,0,0,0,0,0,0,0,2,2,0,0,0,0,0,0,2,2,0,0,0,0,0,0,0,0,],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,],
+	[1,1,2,2,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,2,2,1,1,],
+	[3,3,3,3,3,3,1,0,0,0,0,0,0,0,0,0,0,0,0,1,3,3,3,3,3,3,],
+	[3,3,3,3,3,3,1,0,0,0,0,0,0,0,0,0,0,0,0,1,3,3,3,3,3,3,],
+	[3,3,3,3,3,3,1,2,2,2,2,2,2,2,2,2,2,2,2,1,3,3,3,3,3,3,],
+	[3,3,3,3,3,3,1,2,2,2,2,2,2,2,2,2,2,2,2,1,3,3,3,3,3,3,],
+	[4,4,3,3,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,3,3,4,4,],
+	[4,4,3,3,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,3,3,4,4,],
+	[3,3,3,3,3,3,1,2,2,2,2,2,2,2,2,2,2,2,2,1,3,3,3,3,3,3,],
+	[3,3,3,3,3,3,1,2,2,2,2,2,2,2,2,2,2,2,2,1,3,3,3,3,3,3,],
+	[3,3,3,3,3,3,1,0,0,0,0,0,0,0,0,0,0,0,0,1,3,3,3,3,3,3,],
+	[3,3,3,3,3,3,1,0,0,0,0,0,0,0,0,0,0,0,0,1,3,3,3,3,3,3,],
+	[1,1,2,2,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,2,2,1,1,],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,],
+	[0,0,0,0,0,0,0,0,2,2,0,0,0,0,0,0,2,2,0,0,0,0,0,0,0,0,],
+	[0,0,0,0,0,0,0,0,2,2,0,0,0,0,0,0,2,2,0,0,0,0,0,0,0,0,],
+	[0,0,0,0,0,0,0,0,2,2,0,0,0,0,0,0,2,2,0,0,0,0,0,0,0,0,],
+	[0,0,0,0,0,0,0,0,2,2,0,0,1,1,0,0,2,2,0,0,0,0,0,0,0,0,],
+	[0,0,0,0,0,0,0,0,2,2,0,0,9,0,0,0,2,2,0,0,0,0,0,0,0,0,],
+	[4,0,0,0,0,0,0,0,2,2,0,0,0,0,0,0,2,2,0,0,0,0,0,0,0,4,]
+	
+]
+let tankX
+let tankY
+let KEY_CODE = {
+	LEFT: 37,
+	UP: 38,
+	RIGHT: 39,
+	DOWN: 40,
+	SPACE: 32
+}
+let tankDir = KEY_CODE.UP
+
+function fillBattlefield(mas, event){
+	if((event<=KEY_CODE.DOWN)&&(event>=KEY_CODE.LEFT)){
+		tankDir = event;
+	}
+	let table = "";
+	for(let i = 0; i<m;i++){
+		table += '<tr>'
+		for(let j = 0; j<n; j++){
+			switch(mas[i][j]){
+				case 9:
+					table += '<td id="tank"><img src="./images/'+tankDir+'.png"></td>';
+					tankX = j;
+					tankY = i;
+				break;
+				case 0:
+				case 8:
+				case 7:
+				case 6:
+					table+='<td style="background: #000;"></td>'
+				break;
+				case 1:
+					table+='<td style="background: url(./images/1.png);"></td>'
+				break;
+				case 2:
+					table+='<td style="background: url(./images/2.png);"></td>'
+				break;
+				case 3:
+					table+='<td style="background: url(./images/3.png);"></td>'
+				break;
+				case 4:
+					table+='<td style="background: url(./images/4.png);"></td>'
+				break;
+				case 21:
+					table += '<td id="enemy"><img src="./images/'+enemyDir+'.png"></td>';
+				break;
+			}
+		}
+		table +='</tr>'
+	}
+	document.getElementById("grid").innerHTML = table
+}
+
+function moveTank(mas, event){
+	if((event<=KEY_CODE.DOWN)&&(event>=KEY_CODE.LEFT)){
+		tankDir = event;
+		for(let i = tankY; i<tankY+2;i++){
+			for(let j = tankX;j<tankX+2;j++){
+				mas[i][j] = 0;
+			}
+		}
+		}
+		switch(tankDir){
+			case KEY_CODE.LEFT:
+				if(((tankY>0)&&(mas[tankY][tankX-1]==0)&&(mas[tankY+1][tankX-1]==0))||((tankY>0)&&((mas[tankY][tankX-1]==0)||(mas[tankY][tankX-1]==3))&&((mas[tankY+1][tankX-1]==0)||(mas[tankY+1][tankX-1]==3)))){
+					tankX--
+				}
+			break;
+			case KEY_CODE.UP:
+				if(((tankY>0)&&(mas[tankY-1][tankX]==0)&&(mas[tankY-1][tankX+1]==0))||((mas[tankY-1][tankX+1]==0))||(mas[tankY-1][tankX+1]==3)&&((mas[tankY-1][tankX]==0)||(mas[tankY-1][tankX]==3))){
+					tankY--
+				}
+			break;
+			case KEY_CODE.RIGHT:
+				if(((tankX<24)&&(mas[tankY][tankX+2]==0)&&(mas[tankY+1][tankX+2]==0))||((mas[tankY+1][tankX+2]==0)||(mas[tankY+1][tankX+2]==3))&&((mas[tankY][tankX+2]==0)||(mas[tankY][tankX+2]==3))){
+					tankX++
+				}
+			break;
+			case KEY_CODE.DOWN:
+				if(((tankY<24)&&(mas[tankY+2][tankX]==0)&&(mas[tankY+2][tankX+1]==0))||((mas[tankY+2][tankX+1]==0)||(mas[tankY+2][tankX+1]==3))&&((mas[tankY+2][tankX]==0)||(mas[tankY+2][tankX]==3))){
+					tankY++
+				}
+			break;
+		}
+		let t=9;
+		for(let i = tankY; i < tankY+2;i++){
+			for(let j = tankX;j<tankX+2;j++){
+				mas[i][j] = t;
+				t--;
+			}
+		}
+}
+
+function fire(mas){
+	switch(tankDir){
+		case KEY_CODE.LEFT:
+			var i = tankY;
+			for(var j = tankX-1; j>0;j--){
+				if((mas[i][j] != 0)||(mas[i+1][j] != 0)){
+					if((mas[i][j] == 1)||(mas[i+1][j] == 1)){
+						break;
+						} else if((mas[i][j] == 4)||(mas[i+1][j] == 4)){
+							
+						} else {
+							mas[i][j] = 0
+							mas[i+1][j] = 0
+							break;
+						}
+				}
+			}
+		break;
+		case KEY_CODE.UP:
+			var j = tankX;
+			for(var i = tankY-1; i>0;i--){
+				if((mas[i][j] != 0)||(mas[i][j+1] != 0)){
+					if((mas[i][j] == 1)||(mas[i][j+1] == 1)){
+						break;
+						} else if((mas[i][j] == 4)||(mas[i][j+1] == 4)){
+							
+						} else {
+							mas[i][j] = 0
+							mas[i][j+1] = 0
+							break;
+						}
+				}
+			}
+		break;
+		case KEY_CODE.RIGHT:
+			var i = tankY;
+			for(var j = tankX+2; j<26;j++){
+				if((mas[i][j] != 0)||(mas[i+1][j] != 0)){
+					if((mas[i][j] == 1)||(mas[i+1][j] == 1)){
+						break;
+						} else if((mas[i][j] == 4)||(mas[i+1][j] == 4)){
+							
+						} else {
+							mas[i][j] = 0
+							mas[i+1][j] = 0
+							break;
+						}
+				}
+			}
+		break;
+		case KEY_CODE.DOWN:
+			var j = tankX;
+			for(var i = tankY+2; i<26;i++){
+				if((mas[i][j] != 0)||(mas[i][j+1] != 0)){
+					if((mas[i][j] == 1)||(mas[i][j+1] == 1)){
+						break;
+						} else if((mas[i][j] == 4)||(mas[i][j+1] == 4)){
+							
+						} else {
+							mas[i][j] = 0
+							mas[i][j+1] = 0
+							break;
+						}
+				}
+			}
+		break;
+	}
+}
+let direct
+tick = setInterval(function(){
+	direct = Math.floor((Math.random() * 5)+1);
+	if(direct == 1 && battlefield[enemyX][enemyY-1] == 0 && battlefield[enemyX+1][enemyY-1] == 0){
+		enemyDir = "37"
+		battlefield[enemyX][enemyY] = 0
+		enemyY=enemyY-1
+		battlefield[enemyX][enemyY] = 21
+		console.log("left")
+		fillBattlefield(battlefield, tankDir)
+		var i = enemyX;
+			for(var j = enemyY-1; j>0;j--){
+				if((battlefield[i][j] != 0)||(battlefield[i+1][j] != 0)){
+					if((battlefield[i][j] == 1)||(battlefield[i+1][j] == 1)){
+						break;
+						} else if((battlefield[i][j] == 4)||(battlefield[i+1][j] == 4)){
+							
+						} else {
+							battlefield[i][j] = 0
+							battlefield[i+1][j] = 0
+							break;
+						}
+				}
+			}
+	} else if(direct == 2 && battlefield[enemyX][enemyY+2] == 0 && battlefield[enemyX+1][enemyY+2] == 0){
+		enemyDir = "39"
+		battlefield[enemyX][enemyY] = 0
+		enemyY=enemyY+1
+		battlefield[enemyX][enemyY] = 21
+		console.log("left")
+		fillBattlefield(battlefield, tankDir)
+		var i = enemyX;
+			for(var j = enemyY+2; j<26;j++){
+				if((battlefield[i][j] != 0)||(battlefield[i+1][j] != 0)){
+					if((battlefield[i][j] == 1)||(battlefield[i+1][j] == 1)){
+						break;
+						} else if((battlefield[i][j] == 4)||(battlefield[i+1][j] == 4)){
+							
+						} else {
+							battlefield[i][j] = 0
+							battlefield[i+1][j] = 0
+							break;
+						}
+				}
+			}
+	} else if(direct == 3 && battlefield[enemyX+2][enemyY] == 0 && battlefield[enemyX+2][enemyY+1] == 0){
+		enemyDir = "40"
+		battlefield[enemyX][enemyY] = 0
+		enemyX=enemyX+1
+		battlefield[enemyX][enemyY] = 21
+		console.log("left")
+		fillBattlefield(battlefield, tankDir)
+		var j = enemyY;
+			for(var i = enemyX+2; i<26;i++){
+				if((battlefield[i][j] != 0)||(battlefield[i][j+1] != 0)){
+					if((battlefield[i][j] == 1)||(battlefield[i][j+1] == 1)){
+						break;
+						} else if((battlefield[i][j] == 4)||(battlefield[i][j+1] == 4)){
+							
+						} else {
+							battlefield[i][j] = 0
+							battlefield[i][j+1] = 0
+							break;
+						}
+				}
+			}
+	} else if(direct == 4 && battlefield[enemyX-1][enemyY] == 0 && battlefield[enemyX-1][enemyY+1] == 0){
+		enemyDir = "38"
+		battlefield[enemyX][enemyY] = 0
+		enemyX=enemyX-1
+		battlefield[enemyX][enemyY] = 21
+		console.log("left")
+		fillBattlefield(battlefield, tankDir)
+		var j = enemyY;
+			for(var i = enemyX-1; i>0;i--){
+				if((battlefield[i][j] != 0)||(battlefield[i][j+1] != 0)){
+					if((battlefield[i][j] == 1)||(battlefield[i][j+1] == 1)){
+						break;
+						} else if((battlefield[i][j] == 4)||(battlefield[i][j+1] == 4)){
+							
+						} else {
+							battlefield[i][j] = 0
+							battlefield[i][j+1] = 0
+							break;
+						}
+				}
+			}
+	}
+}, 100)
+
+function keydown(event){
+	if(event.keyCode == KEY_CODE.SPACE){
+		fire(battlefield);
+		fillBattlefield(battlefield, event.keyCode)
+	} else{
+	moveTank(battlefield, event.keyCode)
+	fillBattlefield(battlefield,event.keyCode)
+	}
+}
+
+window.addEventListener('keydown', keydown, false)
+</script>
+</body>
